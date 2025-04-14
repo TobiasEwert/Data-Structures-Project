@@ -5,6 +5,7 @@
 struct Edge {
   string origin;
   string dest;
+  string destState;
   int dist;
   int cost;
 };
