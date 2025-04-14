@@ -1,1 +1,10 @@
-file for now, replace with code
+#include <iostream>
+#include <string>
+#include <vector>
+
+struct Edge {
+  string origin;
+  string dest;
+  int dist;
+  int cost;
+};
