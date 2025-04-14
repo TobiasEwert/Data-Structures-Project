@@ -1,11 +1,20 @@
 #include <iostream>
 #include <string>
 #include <vector>
+using namespace std;
 
 struct Edge {
+
   string origin;
   string dest;
   string destState;
   int dist;
   int cost;
+
+};
+
+class Graph {
+
+  Graph() {}
+
 };
