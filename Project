@@ -4,6 +4,10 @@
 using namespace std;
 
 struct Edge {
+  Edge(int origin = 0, int dest = 0, int dist = 0, int cost = 0) : 
+        origin(origin), dest(dest), dist(dist), cost(cost) {}
+  }
+
   int dist;
   int cost;
 };
@@ -19,11 +23,33 @@ class Graph {
   Graph() {}
 
   void insert_vertex(const Vertex& ver) {
+    if (get_vertex_index(ver) == -1) {
+        vertices.push_back(ver); //insert the vertex to the array of vertices
+        vector<Edge> tmp;
+        edges.push_back(tmp); //insert empty vector to the edges
+    }
+  }
 
+
+  int get_vertex_index(const Vertex& ver) {
+      for(int i = 0; i < vertices.size(); i++) {
+          if (vertices[i].getData() == ver.getData()) {
+              return i;
+          }
+      }
+  
+      return -1;
   }
 
   void add_edge(const Vertex& origin, const Vertex& dest, int d, int c) {
-
+    int i1 = get_vertex_index(ver1);
+    int i2 = get_vertex_index(ver2);
+    if (i1 == -1 || i2 == -1) {
+        throw std::string("Add_edge: incorrect vertices");
+    }
+    Edge v{i1, i2, weight};
+  
+    edges[i1].push_back(v);
   }
 
   
