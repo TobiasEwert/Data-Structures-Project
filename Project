@@ -6,7 +6,6 @@ using namespace std;
 struct Edge {
   Edge(int origin = 0, int dest = 0, int dist = 0, int cost = 0) : 
         origin(origin), dest(dest), dist(dist), cost(cost) {}
-  }
 
   int dist;
   int cost;
