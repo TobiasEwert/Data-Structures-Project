@@ -4,25 +4,29 @@
 using namespace std;
 
 struct Edge {
-
-  string origin;
-  string dest;
-  string destState;
   int dist;
   int cost;
-
 };
 
 struct Vertex {
-
   string airport;
+  string state;
   bool visited;
 
 };
 
 class Graph {
-
   Graph() {}
+
+  void insert_vertex(const Vertex<T>& ver) {
+
+  }
+
+  void add_edge(const Vertex<T>& origin, const Vertex<T>& dest, int d, int c) {
+
+  }
+
+  
 
 };
 
