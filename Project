@@ -52,6 +52,12 @@ class Graph {
     edges[i1].push_back(v);
   }
 
+void clean_visited() {
+    for(Vertex& v : vertices) {
+        v.setVisited(false);
+    }
+}
+
   
 
 };
