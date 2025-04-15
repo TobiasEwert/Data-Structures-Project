@@ -18,11 +18,11 @@ struct Vertex {
 class Graph {
   Graph() {}
 
-  void insert_vertex(const Vertex<T>& ver) {
+  void insert_vertex(const Vertex& ver) {
 
   }
 
-  void add_edge(const Vertex<T>& origin, const Vertex<T>& dest, int d, int c) {
+  void add_edge(const Vertex& origin, const Vertex& dest, int d, int c) {
 
   }
 
