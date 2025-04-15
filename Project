@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 struct Edge {
@@ -41,24 +42,24 @@ class Graph {
   }
 
   void add_edge(const Vertex& origin, const Vertex& dest, int d, int c) {
-    int i1 = get_vertex_index(ver1);
-    int i2 = get_vertex_index(ver2);
+    int i1 = get_vertex_index(origin);
+    int i2 = get_vertex_index(dest);
     if (i1 == -1 || i2 == -1) {
         throw std::string("Add_edge: incorrect vertices");
     }
-    Edge v{i1, i2, weight};
+    Edge v{i1, i2, d, c};
   
     edges[i1].push_back(v);
   }
 
-void clean_visited() {
-    for(Vertex& v : vertices) {
-        v.setVisited(false);
-    }
-}
+  void clean_visited() {
+      for(Vertex& v : vertices) {
+          v.setVisited(false);
+      }
+  }
 
-  
-
+private:
+  vector<Vertex> vertices;
 };
 
 int main() {
