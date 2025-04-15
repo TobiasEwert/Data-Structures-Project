@@ -62,10 +62,10 @@ int main() {
   string line;
   int dist, cost;
 
+  Graph G;
+
   while(getline(infile, line)) {
 
   }
-
-  //Create graph object
   
 }
