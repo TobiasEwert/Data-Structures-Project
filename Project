@@ -13,6 +13,13 @@ struct Edge {
 
 };
 
+struct Vertex {
+
+  string airport;
+  bool visited;
+
+};
+
 class Graph {
 
   Graph() {}
