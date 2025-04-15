@@ -20,6 +20,14 @@ class Graph {
 };
 
 int main() {
+  ifstream infile("airports.txt");
+  string origin, dest, destState;
+  string line;
+  int dist, cost;
+
+  while(getline(infile, line)) {
+
+  }
 
   //Create graph object
   
