@@ -12,6 +12,10 @@ struct Edge {
 };
 
 struct Vertex {
+  Vertex(std::string airport = "", std::string state = "", bool
+        visited = false) : 
+        airport(airport), state(state), visited(visited) {}
+  
   std::string airport;
   std::string state;
   bool visited;
@@ -70,12 +74,53 @@ int main() {
   std::ifstream infile("airports.txt");
   std::string origin, dest, destState;
   std::string line;
+  int comma_index = 0;
   int dist, cost;
+  std::string d, c;
 
   Graph G;
+  
+  getline(infile, line); // Read and skip first line
+  
+  while(getline(infile, line)) { // Read the rest of the lines one by one
+    comma_index = line.find(',');
+    origin = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << origin << "   ";
+    
+    comma_index = line.find(',');
+    dest = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << dest << "   ";
+    
+    comma_index = line.find(',');
+    line = line.substr(comma_index + 1, line.length());
+    
+    comma_index = line.find(',');
+    line = line.substr(comma_index + 1, line.length());
+    
+    comma_index = line.find(',');
+    line = line.substr(comma_index + 1, line.length());
 
-  while(getline(infile, line)) {
-
+    comma_index = line.find('"');
+    destState = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << destState << "   ";
+    
+    comma_index = line.find(',');
+    line = line.substr(comma_index + 1, line.length());
+    
+    comma_index = line.find(',');
+    d = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << d << "   ";
+    
+    comma_index = line.find(',');
+    c = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << c << endl;
+    
+    //G.insert_vertex(Vertex(, temp, false));
   }
   
 }
