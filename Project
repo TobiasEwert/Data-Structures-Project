@@ -8,24 +8,31 @@ struct Edge {
   Edge(int origin = 0, int dest = 0, int dist = 0, int cost = 0) : 
         origin(origin), dest(dest), dist(dist), cost(cost) {}
 
-  int dist;
-  int cost;
+  int origin, dest, dist, cost;
 };
 
 struct Vertex {
-  string airport;
-  string state;
+  std::string airport;
+  std::string state;
   bool visited;
-
+  bool getVisited() const {return visited; }
+  void setVisited(bool v) { visited = v; }
+  const std::string getAirport() const {return airport; }
+  const std::string getState() const {return state; }
 };
 
 class Graph {
+private:
+  std::vector<Vertex> vertices;
+  std::vector<std::vector<Edge>> edges;
+
+public:
   Graph() {}
 
   void insert_vertex(const Vertex& ver) {
     if (get_vertex_index(ver) == -1) {
         vertices.push_back(ver); //insert the vertex to the array of vertices
-        vector<Edge> tmp;
+        std::vector<Edge> tmp;
         edges.push_back(tmp); //insert empty vector to the edges
     }
   }
@@ -33,7 +40,7 @@ class Graph {
 
   int get_vertex_index(const Vertex& ver) {
       for(int i = 0; i < vertices.size(); i++) {
-          if (vertices[i].getData() == ver.getData()) {
+          if (vertices[i].getAirport() == ver.getAirport()) {
               return i;
           }
       }
@@ -57,15 +64,12 @@ class Graph {
           v.setVisited(false);
       }
   }
-
-private:
-  vector<Vertex> vertices;
 };
 
 int main() {
-  ifstream infile("airports.txt");
-  string origin, dest, destState;
-  string line;
+  std::ifstream infile("airports.txt");
+  std::string origin, dest, destState;
+  std::string line;
   int dist, cost;
 
   Graph G;
