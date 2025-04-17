@@ -5,10 +5,11 @@
 using namespace std;
 
 struct Edge {
-  Edge(int origin = 0, int dest = 0, int dist = 0, int cost = 0) : 
-        origin(origin), dest(dest), dist(dist), cost(cost) {}
+  Edge(int origin = 0, int dest = 0, std::string destState = "", int dist = 0, int cost = 0) : 
+        origin(origin), dest(dest), destState(destState), dist(dist), cost(cost) {}
 
   int origin, dest, dist, cost;
+  std::string destState;
 };
 
 struct Vertex {
@@ -52,13 +53,13 @@ public:
       return -1;
   }
 
-  void add_edge(const Vertex& origin, const Vertex& dest, int d, int c) {
+  void add_edge(const Vertex& origin, const Vertex& dest, std::string destState, int d, int c) {
     int i1 = get_vertex_index(origin);
     int i2 = get_vertex_index(dest);
     if (i1 == -1 || i2 == -1) {
         throw std::string("Add_edge: incorrect vertices");
     }
-    Edge v{i1, i2, d, c};
+    Edge v{i1, i2, destState, d, c};
   
     edges[i1].push_back(v);
   }
@@ -66,6 +67,12 @@ public:
   void clean_visited() {
       for(Vertex& v : vertices) {
           v.setVisited(false);
+      }
+  }
+  
+  void print_vertices() {
+      for(int i = 0; i < vertices.size(); i++) {
+          cout << vertices[i].airport << "  " << vertices[i].state << endl;
       }
   }
 };
@@ -86,12 +93,12 @@ int main() {
     comma_index = line.find(',');
     origin = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
-    cout << origin << "   ";
+    //cout << origin << "   ";
     
     comma_index = line.find(',');
     dest = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
-    cout << dest << "   ";
+    //cout << dest << "   ";
     
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
@@ -99,7 +106,7 @@ int main() {
     comma_index = line.find('"');
     originState = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
-    cout << originState << "   ";
+    //cout << originState << "   ";
     
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
@@ -110,7 +117,7 @@ int main() {
     comma_index = line.find('"');
     destState = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
-    cout << destState << "   ";
+    //cout << destState << "   ";
     
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
@@ -118,12 +125,12 @@ int main() {
     comma_index = line.find(',');
     dist = stoi(line.substr(0, comma_index));
     line = line.substr(comma_index + 1, line.length());
-    cout << dist << "   ";
+    //cout << dist << "   ";
     
     comma_index = line.find(',');
     cost = stoi(line.substr(0, comma_index));
     line = line.substr(comma_index + 1, line.length());
-    cout << cost << endl;
+    //cout << cost << endl;
 
     Vertex v1(origin, originState, false);
     Vertex v2(dest, destState, false);
@@ -133,5 +140,7 @@ int main() {
     
     
   }
+  
+  G.print_vertices();
   
 }
