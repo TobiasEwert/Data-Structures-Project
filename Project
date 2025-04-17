@@ -82,6 +82,10 @@ public:
       }
     }
   }
+
+  void print_direct_flights() {
+
+  }
 };
 
 int main() {
