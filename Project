@@ -82,7 +82,7 @@ int main() {
   std::string line;
   int comma_index = 0;
   int dist, cost;
-  std::string d, c;
+  int d, c;
 
   Graph G;
   
