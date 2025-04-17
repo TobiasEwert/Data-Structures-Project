@@ -9,7 +9,6 @@ struct Edge {
         origin(origin), dest(dest), dist(dist), cost(cost) {}
 
   int origin, dest, dist, cost;
-  std::string destState;
 };
 
 struct Vertex {
