@@ -78,7 +78,7 @@ public:
   void print_adj_list() {
     for(int i = 0; i < edges.size(); i++) {
       for(int j = 0; j < edges[i].size(); j++) {
-        cout << edges[i][j].dist << " " << edges[i][j].cost << endl;
+        cout << "Origin Index: " << edges[i][j].origin << " Dest Index: " << edges[i][j].dest << " Distance: " << edges[i][j].dist << " Cost: " << edges[i][j].cost << endl;
       }
     }
   }
@@ -145,9 +145,10 @@ int main() {
     G.insert_vertex(v1);
     G.insert_vertex(v2);
     
-    G.add_edge(v1, v2, d, c);
+    G.add_edge(v1, v2, dist, cost);
   }
   
-  G.print_vertices();
+  //G.print_vertices();
+  //G.print_adj_list();
   
 }
