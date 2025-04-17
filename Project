@@ -5,10 +5,11 @@
 using namespace std;
 
 struct Edge {
-  Edge(int origin = 0, int dest = 0, string destState = "", int dist = 0, int cost = 0) : 
-        origin(origin), dest(dest), destState, dist(dist), cost(cost) {}
+  Edge(int origin = 0, int dest = 0, std::string destState = "", int dist = 0, int cost = 0) : 
+        origin(origin), dest(dest), destState(destState), dist(dist), cost(cost) {}
 
-  int origin, dest, destState, dist, cost;
+  int origin, dest, dist, cost;
+  std::string destState;
 };
 
 struct Vertex {
@@ -52,13 +53,13 @@ public:
       return -1;
   }
 
-  void add_edge(const Vertex& origin, const Vertex& dest, int d, int c) {
+  void add_edge(const Vertex& origin, const Vertex& dest, std::string destState, int d, int c) {
     int i1 = get_vertex_index(origin);
     int i2 = get_vertex_index(dest);
     if (i1 == -1 || i2 == -1) {
         throw std::string("Add_edge: incorrect vertices");
     }
-    Edge v{i1, i2, d, c};
+    Edge v{i1, i2, destState, d, c};
   
     edges[i1].push_back(v);
   }
