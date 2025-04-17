@@ -96,12 +96,17 @@ int main() {
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
     
+    comma_index = line.find('"');
+    originState = line.substr(0, comma_index);
+    line = line.substr(comma_index + 1, line.length());
+    cout << originState << "   ";
+    
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
     
     comma_index = line.find(',');
     line = line.substr(comma_index + 1, line.length());
-
+    
     comma_index = line.find('"');
     destState = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
@@ -111,14 +116,14 @@ int main() {
     line = line.substr(comma_index + 1, line.length());
     
     comma_index = line.find(',');
-    d = line.substr(0, comma_index);
+    dist = stoi(line.substr(0, comma_index));
     line = line.substr(comma_index + 1, line.length());
-    cout << d << "   ";
+    cout << dist << "   ";
     
     comma_index = line.find(',');
-    c = line.substr(0, comma_index);
+    cost = stoi(line.substr(0, comma_index));
     line = line.substr(comma_index + 1, line.length());
-    cout << c << endl;
+    cout << cost << endl;
 
     Vertex v1(origin, originState, false);
     Vertex v2(dest, destState, false);
