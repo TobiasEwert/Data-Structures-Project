@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <map>
+#include <climits>
 using namespace std;
 
 struct Edge {
@@ -9,6 +11,7 @@ struct Edge {
         origin(origin), dest(dest), dist(dist), cost(cost) {}
 
   int origin, dest, dist, cost;
+  vector<Edge> get_edge();
 };
 
 struct Vertex {
@@ -23,6 +26,7 @@ struct Vertex {
   void setVisited(bool v) { visited = v; }
   const std::string getAirport() const {return airport; }
   const std::string getState() const {return state; }
+  const vector<Vertex> get_vertices();
 };
 
 class Graph {
@@ -32,6 +36,7 @@ private:
 
 public:
   Graph() {}
+  
 
   void insert_vertex(const Vertex& ver) {
     if (get_vertex_index(ver) == -1) {
@@ -82,7 +87,110 @@ public:
       }
     }
   }
+  
+  vector<Vertex> get_vertices() const {
+      return vertices;
+  }
+  
+  vector<Edge> get_edge(int index) const {
+      if(index >= 0 && index <= edges.size()){
+        return edges[index];
+      }
+      return {};
+  }
+  
+  void Prims(){
+    vector<Vertex> vert = get_vertices();
+    int n = vert.size();
+    
+    vector<bool> visited(n, false);
+    vector<int> min_cost(n, INT_MAX);
+    vector<int> parent(n, -1);
+    
+    int total = 0;
+    for(int m = 0; m < n;m++){
+        if(visited[m]) continue;
+        min_cost[m] = 0;
+        for(int i = 0; i < n;i++){
+            int u = -1;
+            for(int j = 0; j < n;j++){
+                if(!visited[j] && (u == -1 || min_cost[j] < min_cost[u])) {
+                    u = j;
+                }
+            }
+            
+            if (u == -1) break;
+            
+            visited[u] = true;
+            if (min_cost[u] == INT_MAX) {
+                break; // Disconnected component
+            }
+            total += min_cost[u];
+            
+            for(const Edge& e: edges[u]){
+              int v = e.dest;
+              if(!visited[v] && e.cost < min_cost[v]) {
+                  min_cost[v] = e.cost;
+                  parent[v] = u;
+              }
+            }
+        }
+    }
+    
+    cout << "Minimal Spanning Tree:" << endl;
+    cout << "Edge\t\tWeight" << endl;
+    for(int k = 1;k < n;k++){
+        if(parent[k] != -1 && visited[k]){
+            cout << vert[parent[k]].airport << "-" << vert[k].airport 
+            << "\t\t" << min_cost[k] << endl;
+        }
+    }
+    cout << "Total cost of MST: " << total << endl;
+  }
+
 };
+
+Graph create_undirected_graph (const Graph& G){
+    Graph G_u;
+    vector<Vertex> vertices = G.get_vertices();
+    map<pair<int,int>, int> costs;
+    
+    for(const Vertex& v: vertices)
+      G_u.insert_vertex(v);
+    
+    for(int i = 0;i < vertices.size();i++){
+      vector<Edge> edge_list = G.get_edge(i);
+      for(const Edge& e: edge_list){
+          int org = e.origin;
+          int dest = e.dest;
+          int cost = e.cost;
+          
+          pair <int,int> p = (org < dest) ? make_pair(org, dest) : make_pair(dest, org);
+          
+          if (costs.find(p) == costs.end()) {
+            costs[p] = cost;
+          } else {
+            // If reverse edge already exists, store min cost
+            costs[p] = min(costs[p], cost);
+        }
+      }
+    }
+    
+    for(auto& pair : costs){
+      int org = pair.first.first;
+      int dest = pair.first.second;
+      int cost = pair.second;
+      
+      Vertex dest_org = vertices[org];
+      Vertex org_dest = vertices[dest];
+      
+      G_u.add_edge(dest_org, org_dest, 0, cost);
+      G_u.add_edge(org_dest, dest_org, 0, cost);
+    }
+    return G_u;
+  }
+  
+
 
 int main() {
   std::ifstream infile("airports.txt");
@@ -147,7 +255,9 @@ int main() {
     
     G.add_edge(v1, v2, dist, cost);
   }
-  
+  Graph G_u = create_undirected_graph(G);
+  //G_u.Prims();
+
   //G.print_vertices();
   //G.print_adj_list();
   
