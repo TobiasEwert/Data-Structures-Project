@@ -82,9 +82,33 @@ public:
       }
     }
   }
+  
+  /*void shortest_path(const Vertex& o, const Vertex& d, int stops) {
+    int io = G.get_vertex_index(o);
+    int id = G.get_vertex_index(d);
+    
+    for(int i = 0; i < stops; i++) {
+        for(int j = io; j != io; j++) {
+            for(int k )
+        }
+    
+    }
+  }*/
 
   void print_direct_flights() {
-
+    cout << "Airport        Connections" << endl;
+    for(int i = 0; i < edges.size(); i++) {
+        cout << count_connections(edges[i]) << endl;
+        
+        
+        
+    }
+  }
+  
+  int count_connections(vector<Edge> a) {
+    for(int j = 0; j < a.length(); j++) {
+        a[j].
+    }
   }
 };
 
@@ -153,6 +177,7 @@ int main() {
   }
   
   //G.print_vertices();
-  //G.print_adj_list();
+  G.print_adj_list();
+  //G.print_direct_flights();
   
 }
