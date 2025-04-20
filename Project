@@ -96,20 +96,46 @@ public:
   }*/
 
   void print_direct_flights() {
+    vector<int> inbound(vertices.size(), 0);
+    vector<int> outbound(vertices.size(), 0);
+    int cur, to;
     cout << "Airport        Connections" << endl;
-    for(int i = 0; i < edges.size(); i++) {
-        cout << count_connections(edges[i]) << endl;
+    for(int i = 0; i < vertices.size(); i++) {
+        cur = get_vertex_index(vertices[i]);
         
-        
-        
+        for (int j = 0; j < edges[i].size(); j++) {
+        if (edges[i][j].origin == cur) {
+            outbound[i]++;
+        }
+    }
+
+        for (int k = 0; k < edges.size(); k++) {
+            for (int j = 0; j < edges[k].size(); j++) {
+                if (edges[k][j].dest == cur) {
+                    inbound[i]++;
+                }
+            }
+        }
+    }
+    
+    for(int i = 0; i < vertices.size(); i++) {
+        cout << vertices[i].airport << "            " << inbound[i] + outbound[i] << endl;
     }
   }
   
-  int count_connections(vector<Edge> a) {
-    for(int j = 0; j < a.length(); j++) {
-        a[j].
+  std::string get_vertex_airport(int a) {
+    for(int i = 0; i < vertices.size(); i++) {
+        if(i == a) {
+            return vertices[i].airport;
+        }
     }
+    
+    return "";
   }
+  
+  /*int count_connections(vector<Edge> a) {
+    
+  }*/
 };
 
 int main() {
@@ -177,7 +203,6 @@ int main() {
   }
   
   //G.print_vertices();
-  G.print_adj_list();
-  //G.print_direct_flights();
-  
-}
+  //G.print_adj_list();
+  G.print_direct_flights();
+  }
