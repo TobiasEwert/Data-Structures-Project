@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <map>
 #include <climits>
 #include <algorithm>
 using namespace std;
@@ -12,7 +11,6 @@ struct Edge {
         origin(origin), dest(dest), dist(dist), cost(cost) {}
 
   int origin, dest, dist, cost;
-  vector<Edge> get_edge();
 };
 
 struct Vertex {
@@ -27,7 +25,6 @@ struct Vertex {
   void setVisited(bool v) { visited = v; }
   const std::string getAirport() const {return airport; }
   const std::string getState() const {return state; }
-  const vector<Vertex> get_vertices();
 };
 
 struct DSU {
@@ -57,10 +54,10 @@ struct DSU {
     }
 };
 
-bool comparator(const Edge& a,const Edge& b){
+bool comparator(const Edge& a,const Edge& b) {
     if(a.cost < b.cost)return true;
     return false;
-  } 
+} 
 
 class Graph {
 private:
@@ -69,7 +66,6 @@ private:
 
 public:
   Graph() {}
-  
 
   void insert_vertex(const Vertex& ver) {
     if (get_vertex_index(ver) == -1) {
@@ -100,20 +96,25 @@ public:
   
     edges[i1].push_back(v);
   }
-
-  void clean_visited() {
-      for(Vertex& v : vertices) {
-          v.setVisited(false);
-      }
-  }
   
-  void print_vertices() {
+    vector<Vertex> get_vertices() const {
+      return vertices;
+    }
+    
+    vector<Edge> get_edge(int index) const {
+      if(index >= 0 && index <= edges.size()){
+        return edges[index];
+      }
+      return {};
+    }
+  
+    void print_vertices() {
       for(int i = 0; i < vertices.size(); i++) {
           cout << vertices[i].airport << "  " << vertices[i].state << endl;
       }
-  }
-
-  void print_adj_list() {
+    }
+  
+    void print_adj_list() {
     for(int i = 0; i < edges.size(); i++) {
       for(int j = 0; j < edges[i].size(); j++) {
         cout << "Origin Index: " << edges[i][j].origin << " Dest Index: " << edges[i][j].dest << " Distance: " << edges[i][j].dist << " Cost: " << edges[i][j].cost << endl;
@@ -121,17 +122,267 @@ public:
     }
   }
   
-  vector<Vertex> get_vertices() const {
-      return vertices;
+  /*void shortest_path(const Vertex& o, const Vertex& d, int stops) {
+    int io = G.get_vertex_index(o);
+    int id = G.get_vertex_index(d);
+    
+    for(int i = 0; i < stops; i++) {
+        for(int j = io; j != io; j++) {
+            for(int k )
+        }
+    
+    }
+  }*/
+  
+  
+  // Function 2
+  void shortest_path(const std::string& start_airport, const std::string& end_airport) {
+    int n = vertices.size();
+    std::vector<int> dist(n, INT_MAX);
+    std::vector<int> cost(n, INT_MAX);
+    std::vector<int> prev(n, -1);
+    std::vector<bool> visited(n, false);
+
+    int start_index = -1, end_index = -1;
+    for (int i = 0; i < n; ++i) {
+        if (vertices[i].getAirport() == start_airport) start_index = i;
+        if (vertices[i].getAirport() == end_airport) end_index = i;
+    }
+
+    if (start_index == -1 || end_index == -1) {
+        std::cout << "Shortest route from " << start_airport << " to " << end_airport << ": None" << std::endl;
+        return;
+    }
+
+    dist[start_index] = 0;
+    cost[start_index] = 0;
+
+    for (int i = 0; i < n; ++i) {
+        int u = -1;
+        for (int j = 0; j < n; ++j) {
+            if (!visited[j] && (u == -1 || dist[j] < dist[u])) {
+                u = j;
+            }
+        }
+
+        if (dist[u] == INT_MAX) break;
+        visited[u] = true;
+
+        for (const Edge& e : edges[u]) {
+            if (dist[u] + e.dist < dist[e.dest]) {
+                dist[e.dest] = dist[u] + e.dist;
+                cost[e.dest] = cost[u] + e.cost;
+                prev[e.dest] = u;
+            }
+        }
+    }
+
+    if (dist[end_index] == INT_MAX) {
+        std::cout << "Shortest route from " << start_airport << " to " << end_airport << ": None" << std::endl;
+        return;
+    }
+
+    std::vector<std::string> path;
+    for (int at = end_index; at != -1; at = prev[at]) {
+        path.push_back(vertices[at].getAirport());
+    }
+
+    std::vector<std::string> path_reversed;
+    for (int i = path.size() - 1; i >= 0; --i) {
+        path_reversed.push_back(path[i]);
+    }
+
+
+    std::cout << "Shortest route from " << start_airport << " to " << end_airport << ": ";
+    for (int i = 0; i < path_reversed.size(); ++i) {
+        std::cout << path_reversed[i];
+        if (i != path_reversed.size() - 1) std::cout << " -> ";
+    }
+    std::cout << ". The length is " << dist[end_index] << ". The cost is " << cost[end_index] << "." << std::endl;
+
+    }
+    
+    // Function 3
+    void shortest_paths_to_state(const std::string& start_airport, const std::string& dest_state) {
+        int n = vertices.size();
+        std::vector<int> dist(n, INT_MAX);
+        std::vector<int> cost(n, INT_MAX);
+        std::vector<int> prev(n, -1);
+        std::vector<bool> visited(n, false);
+    
+        int start_index = -1;
+        for (int i = 0; i < n; ++i) {
+            if (vertices[i].getAirport() == start_airport) {
+                start_index = i;
+                break;
+            }
+        }
+    
+        if (start_index == -1) {
+            std::cout << "Start airport " << start_airport << " not found.\n";
+            return;
+        }
+    
+        dist[start_index] = 0;
+        cost[start_index] = 0;
+    
+        for (int i = 0; i < n; ++i) {
+            int u = -1;
+            for (int j = 0; j < n; ++j) {
+                if (!visited[j] && (u == -1 || dist[j] < dist[u])) {
+                    u = j;
+                }
+            }
+    
+            if (dist[u] == INT_MAX) break;
+            visited[u] = true;
+    
+            for (int k = 0; k < edges[u].size(); ++k) {
+                int v = edges[u][k].dest;
+                int d = edges[u][k].dist;
+                int c = edges[u][k].cost;
+    
+                if (dist[u] + d < dist[v]) {
+                    dist[v] = dist[u] + d;
+                    cost[v] = cost[u] + c;
+                    prev[v] = u;
+                }
+            }
+        }
+    
+        bool found = false;
+        std::cout << "Shortest paths from " << start_airport << " to " << dest_state << " state airports are:\n";
+        std::cout << "Path                               Length         Cost\n";
+    
+        for (int i = 0; i < n; ++i) {
+            //std::cout << "Vertex " << i << ": " << vertices[i].getAirport() << ", State: " << vertices[i].getState() << "\n";
+
+            if (vertices[i].getState() == dest_state && dist[i] != INT_MAX) {
+                std::vector<std::string> path;
+                for (int at = i; at != -1; at = prev[at]) {
+                    path.push_back(vertices[at].getAirport());
+                }
+    
+                std::vector<std::string> path_reversed;
+                for (int j = path.size() - 1; j >= 0; --j) {
+                    path_reversed.push_back(path[j]);
+                }
+    
+                std::string path_str = "";
+                for (int j = 0; j < path_reversed.size(); ++j) {
+                    path_str += path_reversed[j];
+                    if (j != path_reversed.size() - 1) path_str += "->";
+                }
+    
+                while (path_str.length() < 35) path_str += " ";
+    
+                std::cout << path_str << dist[i] << "              " << cost[i] << std::endl;
+                found = true;
+            }
+        }
+    
+        if (!found) {
+            std::cout << "No reachable airports found in state " << dest_state << ".\n";
+        }
+    }
+    
+    // Function 4
+    void shortest_path_with_stops(const std::string& start_airport, const std::string& end_airport, int stops) {
+        int n = vertices.size();
+        int start_index = -1, end_index = -1;
+    
+        for (int i = 0; i < n; ++i) {
+            if (vertices[i].getAirport() == start_airport) start_index = i;
+            if (vertices[i].getAirport() == end_airport) end_index = i;
+        }
+    
+        if (start_index == -1 || end_index == -1) {
+            std::cout << "Shortest route from " << start_airport << " to " << end_airport << " with " << stops << " stops: None" << std::endl;
+            return;
+        }
+    
+        struct PathInfo {
+            int current, dist, cost, remaining_stops;
+            std::vector<int> path;
+        };
+    
+        std::vector<PathInfo> queue;
+        queue.push_back({start_index, 0, 0, stops + 1, {start_index}});
+    
+        int min_dist = INT_MAX;
+        int min_cost = INT_MAX;
+        std::vector<int> best_path;
+    
+        while (!queue.empty()) {
+            PathInfo p = queue.back();
+            queue.pop_back();
+    
+            if (p.current == end_index && p.remaining_stops == 0) {
+                if (p.dist < min_dist || (p.dist == min_dist && p.cost < min_cost)) {
+                    min_dist = p.dist;
+                    min_cost = p.cost;
+                    best_path = p.path;
+                }
+                continue;
+            }
+    
+            if (p.remaining_stops == 0) continue;
+    
+            for (const Edge& e : edges[p.current]) {
+                std::vector<int> new_path = p.path;
+                new_path.push_back(e.dest);
+                queue.push_back({e.dest, p.dist + e.dist, p.cost + e.cost, p.remaining_stops - 1, new_path});
+            }
+        }
+    
+        std::cout << "Shortest route from " << start_airport << " to " << end_airport << " with " << stops << " stops: ";
+        if (best_path.empty()) {
+            std::cout << "None" << std::endl;
+            return;
+        }
+    
+        for (int i = 0; i < best_path.size(); ++i) {
+            std::cout << vertices[best_path[i]].getAirport();
+            if (i != best_path.size() - 1) std::cout << " -> ";
+        }
+    
+        std::cout << ". The length is " << min_dist << ". The cost is " << min_cost << "." << std::endl;
+    }
+
+
+  // Function 5
+  void print_direct_flights() {
+    vector<int> inbound(vertices.size(), 0);
+    vector<int> outbound(vertices.size(), 0);
+    int cur, to;
+    cout << "Airport        Connections" << endl;
+    for(int i = 0; i < vertices.size(); i++) {
+        cur = get_vertex_index(vertices[i]);
+        
+        for (int j = 0; j < edges[i].size(); j++) {
+        if (edges[i][j].origin == cur) {
+            outbound[i]++;
+        }
+    }
+
+        for (int k = 0; k < edges.size(); k++) {
+            for (int j = 0; j < edges[k].size(); j++) {
+                if (edges[k][j].dest == cur) {
+                    inbound[i]++;
+                }
+            }
+        }
+    }
+    
+    for(int i = 0; i < vertices.size(); i++) {
+        cout << vertices[i].airport << "            " << inbound[i] + outbound[i] << endl;
+    }
   }
   
-  vector<Edge> get_edge(int index) const {
-      if(index >= 0 && index <= edges.size()){
-        return edges[index];
-      }
-      return {};
-  }
   
+  
+  
+  // Function 7
   void Prims(){
     vector<Vertex> vert = get_vertices();
     int n = vert.size();
@@ -181,7 +432,8 @@ public:
     cout << "Total cost of MST: " << total << endl;
   }
   
-  void Kruskals(){
+   // Function 8
+   void Kruskals() {
     vector<Edge> all_edges;
     vector<Vertex> vert = get_vertices();
     int n = vert.size();
@@ -209,47 +461,13 @@ public:
     cout << "Total cost of MST: " << total << endl;
   }
 
-};
 
-Graph create_undirected_graph (const Graph& G){
-    Graph G_u;
-    vector<Vertex> vertices = G.get_vertices();
-    map<pair<int,int>, int> costs;
-    
-    for(const Vertex& v: vertices)
-      G_u.insert_vertex(v);
-    
-    for(int i = 0;i < vertices.size();i++){
-      vector<Edge> edge_list = G.get_edge(i);
-      for(const Edge& e: edge_list){
-          int org = e.origin;
-          int dest = e.dest;
-          int cost = e.cost;
-          
-          pair <int,int> p = (org < dest) ? make_pair(org, dest) : make_pair(dest, org);
-          
-          if (costs.find(p) == costs.end()) {
-            costs[p] = cost;
-          } else {
-            // If reverse edge already exists, store min cost
-            costs[p] = min(costs[p], cost);
-        }
+  void clean_visited() {
+      for(Vertex& v : vertices) {
+          v.setVisited(false);
       }
-    }
-    
-    for(auto& pair : costs){
-      int org = pair.first.first;
-      int dest = pair.first.second;
-      int cost = pair.second;
-      
-      Vertex dest_org = vertices[org];
-      Vertex org_dest = vertices[dest];
-      
-      G_u.add_edge(dest_org, org_dest, 0, cost);
-      G_u.add_edge(org_dest, dest_org, 0, cost);
-    }
-    return G_u;
   }
+};
 
 int main() {
   std::ifstream infile("airports.txt");
@@ -273,10 +491,9 @@ int main() {
     dest = line.substr(0, comma_index);
     line = line.substr(comma_index + 1, line.length());
     //cout << dest << "   ";
-    //cout << dest << "   ";
     
     comma_index = line.find(',');
-    line = line.substr(comma_index + 1, line.length());
+    line = line.substr(comma_index + 2, line.length());
     
     comma_index = line.find('"');
     originState = line.substr(0, comma_index);
@@ -287,7 +504,7 @@ int main() {
     line = line.substr(comma_index + 1, line.length());
     
     comma_index = line.find(',');
-    line = line.substr(comma_index + 1, line.length());
+    line = line.substr(comma_index + 2, line.length());
     
     comma_index = line.find('"');
     destState = line.substr(0, comma_index);
@@ -315,11 +532,31 @@ int main() {
     
     G.add_edge(v1, v2, dist, cost);
   }
-  Graph G_u = create_undirected_graph(G);
-  //G_u.Prims();
-  //G_u.Kruskals();
-
+  
   //G.print_vertices();
   //G.print_adj_list();
+  
+ 
+  
+    cout << "Task #2 Outputs: " << endl;
+    G.shortest_path("IAD", "MIA");
+    cout << endl;
+    G.shortest_path("PIT", "ACT");
+    cout << endl;
+    
+    cout << "Task #3 Outputs: " << endl;
+    G.shortest_paths_to_state("ATL", "FL");
+    cout << endl;
+    G.shortest_paths_to_state("PIT", "TX");
+    cout << endl;
+    
+    cout << "Task #4 Outputs: " << endl;
+    G.shortest_path_with_stops("IAD", "MIA", 3);
+    cout << endl;
+    G.shortest_path_with_stops("PIT", "ACT", 2);
+    cout << endl;
+    
+    cout << "Task #5 Outputs: " << endl;
+    G.print_direct_flights();
   
 }
