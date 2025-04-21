@@ -3,7 +3,6 @@
 #include <vector>
 #include <fstream>
 #include <climits>
-#include <algorithm>
 using namespace std;
 
 struct Edge {
@@ -11,6 +10,12 @@ struct Edge {
         origin(origin), dest(dest), dist(dist), cost(cost) {}
 
   int origin, dest, dist, cost;
+  
+  bool operator>(const Edge& a) {
+    return cost < a.cost;
+  }
+  
+  void bubbleSort(vector<Edge> &v);
 };
 
 struct Vertex {
@@ -54,10 +59,17 @@ struct DSU {
     }
 };
 
-bool comparator(const Edge& a,const Edge& b) {
-    if(a.cost < b.cost)return true;
-    return false;
-} 
+void bubbleSort(vector<Edge> &v){
+    int n = v.size();
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (v[j] > v[j + 1])
+                swap(v[j], v[j + 1]);
+        }
+    }
+}
 
 class Graph {
 private:
@@ -133,7 +145,6 @@ public:
     
     }
   }*/
-  
   
   // Function 2
   void shortest_path(const std::string& start_airport, const std::string& end_airport) {
@@ -379,8 +390,54 @@ public:
     }
   }
   
-  
-  
+  // Function 6
+  Graph create_undirected_graph (const Graph& G){
+     Graph G_u;
+     vector<Vertex> vertices = G.get_vertices();
+ 
+     for(const Vertex& v: vertices)
+       G_u.insert_vertex(v);
+ 
+    vector<vector<int>> edge;
+    
+     for(int i = 0;i < vertices.size();i++){
+       vector<Edge> edge_list = G.get_edge(i);
+       for(const Edge& e: edge_list){
+           int org = e.origin;
+           int dest = e.dest;
+           int cost = e.cost;
+ 
+           int x = (org < dest) ? org : dest;
+           int y = (org < dest) ? dest : org;
+ 
+           bool exist = false;
+           for(int j = 0; j < edge.size(); j++){
+               if(edge[j][0] == x && edge[j][1] == y){
+                   if(edge[j][2] > cost){
+                       edge[j][2] = cost;
+                   }
+                   exist = true;
+                   break;
+               }
+           }
+           
+           if(!exist){
+               vector<int> temp_edge = {x, y, cost};
+               edge.push_back(temp_edge);
+           }
+       }
+     }
+ 
+     for(int i = 0;  i < edge.size(); i++){
+       int org = edge[i][0];
+       int dest = edge[i][1];
+       int cost = edge[i][2];
+       
+       G_u.add_edge(vertices[org], vertices[dest], 0, cost);
+       G_u.add_edge(vertices[dest], vertices[org], 0, cost);
+     }
+     return G_u;
+   }
   
   // Function 7
   void Prims(){
@@ -432,26 +489,29 @@ public:
     cout << "Total cost of MST: " << total << endl;
   }
   
-   // Function 8
-   void Kruskals() {
-    vector<Edge> all_edges;
+  // Function 8
+  void Kruskals() {
+    vector<Edge> edge;
     vector<Vertex> vert = get_vertices();
     int n = vert.size();
     
     for(int i = 0;i < n;i++){
         for(const Edge& e : edges[i]){
-            all_edges.push_back(e);
+            edge.push_back(e);    
         }
     }
     
-    sort(all_edges.begin(), all_edges.end(), comparator);
+    
+    bubbleSort(edge);
+    
+    //sort(edge.begin(), edge.end(), comparator);
     
     DSU dsu(n);
     int total = 0;
     
     cout << "Minimal Spanning Tree:" << endl;
     cout << "Edge\t\tWeight" << endl;
-    for(const Edge& e : all_edges){
+    for(const Edge& e : edge){
         if(dsu.unite(e.origin, e.dest)){
             cout << vert[e.origin].airport << " - " << vert[e.dest].airport 
             << "\t\t" << e.cost << endl;
@@ -558,5 +618,11 @@ int main() {
     
     cout << "Task #5 Outputs: " << endl;
     G.print_direct_flights();
-  
+    
+    Graph G_u = G.create_undirected_graph(G);
+    cout << "Task #7 Outputs: " << endl;
+    G_u.Prims();
+    
+    cout << "Task #8 Outputs: " << endl;
+    G_u.Kruskals(); 
 }
